@@ -23,9 +23,12 @@ An on-machine test demo
 
 ## 项目结果
 
+【Vue CLI】
 使用```Vue```框架编写。仅修改```inputArr```数据源即可扩展选项、升级开发。主要代码写在"`/src/views/staff.vue`"文件中。
+【**Vue Basic**】
+使用```Vue```框架编写。文件存于"`/light`"目录下，打开HTML文件即可
 
-## 项目启动
+## CLI 项目启动
 
 
 ### Project setup
