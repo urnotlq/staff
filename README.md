@@ -7,7 +7,7 @@ An on-machine test demo
 
 ​		选中部门1、部门2、员工小八、员工小九时页面的选中情况及结果如下：
 
-<img src="doc/demo.jpg" alt="默认样式" style="zoom: 67%;" />	<img src="doc/demo2.jpg" alt="选中结果" style="zoom: 67%;" />
+<img src="docs/demo.jpg" alt="默认样式" style="zoom: 67%;" />	<img src="docs/demo2.jpg" alt="选中结果" style="zoom: 67%;" />
 
 2、 部门后面的符号“+/-”，点击+号时，展开员工列表，点击-号时，隐藏员工列表。加号或减号同时只能显示一个。
 
