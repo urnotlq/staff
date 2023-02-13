@@ -1,0 +1,225 @@
+<template>
+    <div class="staff">
+        <div class="box">
+            <div class="title">请选择部门/员工：</div>
+            <div class="content">
+                <div class="part" v-for="part in inputArr" :key="part.id">
+                    <div class="input">
+                        <input type="checkbox" :id="`part${part.id}`" :value="part.id" v-model="department"
+                         @change="changePart(part.id, part.clerks)">
+                        <label :for="`part${part.id}`">{{ part.part }}</label>
+                        <span @click="part.isShow = !part.isShow">{{ `${part.isShow ? "－" : "+"}` }}</span>
+                    </div>
+                    <div class="clerks" v-show="part.isShow">
+                        <div class="input" v-for="c in part.clerks" :key="c.id">
+                            <input type="checkbox" :id="`clerk${c.id}`" :value="c.id" v-model="user"
+                             @change="changeClerk(c.id, part.id, part.clerks)">
+                            <label :for="`clerk${c.id}`">{{ c.clerk }}</label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <div class="title">选中结果：</div>
+            <div class="content">
+                { "department": {{ JSON.stringify(department) }}," user" :{{ JSON.stringify(filtered) }}}
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            // 表单列表
+            inputArr: [
+                {
+                    id: 1,
+                    part: '部门 1',
+                    isShow: true,
+                    clerks: [
+                        {
+                            id: 1,
+                            clerk: '小一'
+                        },
+                        {
+                            id: 2,
+                            clerk: '小二'
+                        },
+                        {
+                            id: 3,
+                            clerk: '小三'
+                        },
+                    ]
+                },
+                {
+                    id: 2,
+                    part: '部门 2',
+                    isShow: true,
+                    clerks: [
+                        {
+                            id: 4,
+                            clerk: '小四'
+                        },
+                        {
+                            id: 5,
+                            clerk: '小五'
+                        },
+                        {
+                            id: 6,
+                            clerk: '小六'
+                        },
+                    ]
+                },
+                {
+                    id: 3,
+                    part: '部门 3',
+                    isShow: true,
+                    clerks: [
+                        {
+                            id: 7,
+                            clerk: '小七'
+                        },
+                        {
+                            id: 8,
+                            clerk: '小八'
+                        },
+                        {
+                            id: 9,
+                            clerk: '小九'
+                        },
+                    ]
+                },
+            ],
+            // 结果
+            department: [],
+            user: [],
+            filtered: [],
+        }
+    },
+    watch: {
+        user: function(newUser) {
+            this.handlefilter()
+            this.filtered.sort((a,b)=>a-b)
+        }
+    },
+    methods: {
+        // 计算部门员工编号
+        filterClerks (clerks){
+            let arr = [];
+            clerks.forEach( obj => {
+                arr.push(obj.id);
+            })
+            return arr;
+        },
+        // 选择部门
+        changePart(pid, clerks) {
+            // 部门员工编号
+            let arr = this.filterClerks(clerks)
+            if(this.department.includes(pid)){
+                // 部门全选
+                arr.forEach( item => {
+                    if(!this.user.includes(item)){
+                        this.user.push(item);
+                    }
+                })
+            } else {
+                // 取消全选
+                arr.forEach( item =>{
+                    let index = this.user.indexOf(item)
+                    if(index !== -1){
+                        this.user.splice(index, 1);
+                    }
+                })
+            }
+            // 排序
+            this.department.sort((a,b) => a-b)
+        },
+        // 选择员工
+        changeClerk(cid, pid, clerks) {
+            // 当前部门所有员工
+            let arr = this.filterClerks(clerks)
+            
+            // 判断部门全选
+            let count = 0
+            arr.forEach( item => {
+                count += this.user.includes(item) ? 1:0
+            })
+            // 全选/取消全选
+            if(count === arr.length) {
+                this.department.push(pid)
+            } else {
+                let index = this.department.indexOf(pid)
+                index>-1 ? this.department.splice(index, 1) : 0;
+            }
+
+            // 排序
+            this.department.sort((a,b) => a-b)
+        },
+        // 处理员工显示
+        handlefilter(){
+            this.filtered = [...this.user]
+            let arr = []
+            this.department.forEach(item => {
+                // 查找当前部门所有子员工
+                for (let index = 0; index < this.inputArr.length; index++) {
+                    const element = this.inputArr[index];
+                    if(element.id === item){
+                        arr = element.clerks
+                        arr = this.filterClerks(arr)
+                    }
+                }
+                // 移出当前部门所有员工
+                arr.forEach(item => {
+                    let index = this.filtered.indexOf(item)
+                    if(index !== -1){
+                        this.filtered.splice(index, 1);
+                    }
+                })
+            })
+        },
+    },
+}
+</script>
+
+<style lang="scss">
+.box{
+    margin: 20px 0;
+    .content {
+        margin-top: 12px;
+    }
+}
+.input {
+    margin-bottom: 8px;
+    /* 修改复选框样式 */
+    input[type=checkbox] {
+	    visibility: hidden; // 隐藏默认样式
+    }
+    input +label:before {
+        // 未选中
+        display: inline-block;
+        width: 16px;
+        content: "\2610";
+    }
+    input:checked +label:before {
+        // 选中
+        content: "\2611";
+        font-weight: 600;
+    }
+}
+.part {
+    margin-left: -12px;
+}
+.clerks {
+    display: flex;
+    margin-left: 20px;
+}
+span {
+    margin-left: 8px;
+    font-weight: 600;
+    cursor: default;
+}
+</style>
